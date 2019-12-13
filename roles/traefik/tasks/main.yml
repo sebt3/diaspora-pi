@@ -1,0 +1,8 @@
+- name: Generate the stack configuration
+  template:
+    src: compose.yaml.j2
+    dest: /tmp/traefik-compose.yaml
+
+- name: Install traefik
+  shell: >
+     docker stack deploy -c /tmp/traefik-compose.yaml traefik

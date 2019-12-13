@@ -1,0 +1,68 @@
+version: '3.3'
+configs:
+  nginx:
+    file: nginx.conf
+
+volumes:
+  data:
+  database:
+
+networks:
+  diaspora:
+  public:
+    external: true
+
+services:
+  nginx:
+    image: nginx:latest
+    configs:
+      - source: nginx
+        target: /etc/nginx/nginx.conf
+    networks:
+      - diaspora
+      - public
+    volumes:
+      - data:/home/diaspora/diaspora/public
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.diaspora.rule=Host(`{{ domain }}`) 
+        - traefik.http.routers.diaspora.tls=true
+        - traefik.http.routers.diaspora.tls.certresolver=le
+        - traefik.http.routers.diaspora.entrypoints=websecure
+        - traefik.http.services.diaspora.loadbalancer.server.port=80
+        - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+        - traefik.http.routers.redirect.rule=Host(`{{ domain }}`)
+        - traefik.http.routers.redirect.middlewares=redirect-to-https
+        - traefik.http.routers.redirect.entrypoints=web
+
+  postgres:
+    image: postgres:12-alpine
+    volumes:
+      - database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=diaspora
+      - POSTGRES_PASSWORD=diaspora
+      - POSTGRES_DB=diaspora
+    networks:
+      - diaspora
+  redis:
+    image: redis:alpine
+    networks:
+      - diaspora
+  diaspora:
+    image: sebt3/diaspora:latest
+    environment:
+      - DB_USERNAME=diaspora
+      - DB_PASSWORD=diaspora
+      - DB_HOST=postgres
+      - ENVIRONMENT_REDIS=redis://redis
+      - ENVIRONMENT_URL=https://{{ domain }}/
+      - PORT=2000
+      - SETTINGS_CAPTCHA_ENABLE=false
+    networks:
+      - diaspora
+    volumes:
+      - data:/home/diaspora/diaspora/public
+
+

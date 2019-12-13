@@ -1,0 +1,13 @@
+- name: Generate the stack configuration
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: 'compose.yaml.j2',   dest: '/tmp/diaspora-compose.yaml',   desc: 'Compose' }
+    - { src: 'nginx.conf.j2',   dest: '/tmp/nginx.conf',   desc: 'nginx' }
+  loop_control:
+    label: "{{ item.desc }}"
+
+- name: Install diaspora
+  shell: >
+     docker stack deploy -c /tmp/diaspora-compose.yaml diaspora

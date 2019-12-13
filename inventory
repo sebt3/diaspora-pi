@@ -1,0 +1,11 @@
+[pi]
+#192.168.9.1 ansible_user=pi
+localhost
+
+[pi:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_become=true
+
+# Configure these : 
+domain=diaspora.mondomain.com
+email=admin@mondomain.com

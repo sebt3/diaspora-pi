@@ -1,0 +1,8 @@
+---
+array_arch:
+  armv7l: "armhf"
+  x86_64: "amd64"
+
+arch: "{{ array_arch[ansible_architecture] }}"
+
+edition: "ce"

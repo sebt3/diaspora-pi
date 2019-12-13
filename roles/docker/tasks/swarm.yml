@@ -1,0 +1,20 @@
+---
+- name: Check if swarm is active
+  shell: >
+    docker swarm ca
+  register: swarm
+
+- name: Activate swarm
+  shell: >
+    docker swarm init --advertise-addr "{{ ansible_default_ipv4['address'] }}"
+  when: swarm.rc != 0
+
+- name: Check if the "public" network exist
+  shell: >
+    docker network inspect public
+  register: net
+
+- name: Create the "public" network
+  shell: >
+    docker network create --driver=overlay public
+  when: net.rc != 0

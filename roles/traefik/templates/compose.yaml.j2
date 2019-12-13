@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:v2.1
+    command: |-
+      --api
+      --api.insecure
+      --entryPoints.web.address=:80
+      --entryPoints.websecure.address=:443
+      --certificatesresolvers.le.acme.email={{ email }}
+      --certificatesresolvers.le.acme.httpchallenge=true
+      --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+      --certificatesresolvers.le.acme.storage=/acme/acme.json
+      --providers.docker.endpoint="unix:///var/run/docker.sock"
+      --providers.docker.swarmMode=true
+      --providers.docker.network=public
+      --providers.docker.exposedbydefault=false
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    networks:
+      - public
+    volumes:
+      - acme:/acme/
+      - logs:/var/log/access.log
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+volumes:
+  acme:
+  logs:
+
+networks:
+  public:
+    external: true

@@ -1,0 +1,15 @@
+- include_tasks: redhat.yml
+  when: ansible_os_family == 'RedHat'
+
+- include_tasks: debian.yml
+  when: ansible_os_family == 'Debian'
+
+- include_tasks: swarm.yml
+
+- name: 'set periodic docker system prune'
+  cron:
+    name: 'docker-prune'
+    minute: '0'
+    hour: '*/2'
+    job: 'docker container prune -f'
+
