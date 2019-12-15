@@ -36,6 +36,11 @@ Just during the installation phase :
   - If you connect over wifi, then do step *2-2*
   - It's a good idea to enable *5-2* (Interfacing Options - SSH) if you plan on removing the keyboard and the screen from the pi
   - Use `[tab]` to select the `Finish` button
+  
+## Prepare your box
+- Make sure your rPI will keep a static IP
+- use the port-fordwing feature of your box to forward ports 80 and 443 to your rPI.
+(Steps details depends on your box)
 
 ## Install steps
 
