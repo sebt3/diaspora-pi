@@ -1,5 +1,5 @@
 [pi]
-#192.168.9.1 ansible_user=pi
+#192.168.9.250 ansible_user=pi
 localhost
 
 [pi:vars]

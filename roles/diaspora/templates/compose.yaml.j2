@@ -36,6 +36,13 @@ services:
         - traefik.http.routers.redirect.middlewares=redirect-to-https
         - traefik.http.routers.redirect.entrypoints=web
 
+        - traefik.frontend.rule=Host:{{ domain }}
+        - traefik.tags=public
+        - traefik.docker.network=public
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        - traefik.webservice.frontend.entryPoints=https
+
   postgres:
     image: postgres:12-alpine
     volumes:
@@ -58,6 +65,8 @@ services:
       - DB_HOST=postgres
       - ENVIRONMENT_REDIS=redis://redis
       - ENVIRONMENT_URL=https://{{ domain }}/
+      - RELAY_INBOUND_SUBSCRIBE=true
+      - RELAY_INBOUND_INCLUDE_USER_TAGS=true
       - PORT=2000
       - SETTINGS_CAPTCHA_ENABLE=false
     networks:
