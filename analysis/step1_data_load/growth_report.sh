@@ -8,6 +8,7 @@ fail() {
 uRl=${1:-"https://shuss.freeboxos.fr"}
 usEr=${2:-"seb"}
 passWd=${3:-"password"}
+hoSt=${4:-"pi"}
 
 Base=http://localhost:9515/session
 newSess() {
@@ -35,10 +36,10 @@ clickElem() {
 Stack=diaspora
 Svc=postgres
 getCont() {
-	ssh pi sudo docker stack ps ${Stack} -f name=${Stack}_${Svc}.1 --no-trunc|awk -v N=${Stack}_${Svc}.1 '$2==N{print $1}'
+	ssh "$hoSt" sudo docker stack ps ${Stack} -f name=${Stack}_${Svc}.1 --no-trunc|awk -v N=${Stack}_${Svc}.1 '$2==N{print $1}'
 }
 sql() {
-	ssh pi sudo docker exec -i ${Stack}_${Svc}.1.$Cont su - postgres -c "'psql -U diaspora -d diaspora_production -t'"|sed '/^$/d'
+	ssh "$hoSt" sudo docker exec -i ${Stack}_${Svc}.1.$Cont su - postgres -c "'psql -U diaspora -d diaspora_production -t'"|sed '/^$/d'
 }
 
 echo "Get container ID"

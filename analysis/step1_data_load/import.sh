@@ -8,6 +8,7 @@ fail() {
 uRl=${1:-"https://shuss.freeboxos.fr"}
 usEr=${2:-"seb"}
 passWd=${3:-"password"}
+hoSt=${4:-"pi"}
 
 Base=http://localhost:9515/session
 newSess() {
@@ -35,10 +36,10 @@ clickElem() {
 Stack=diaspora
 Svc=postgres
 getCont() {
-	ssh pi sudo docker stack ps ${Stack} -f name=${Stack}_${Svc}.1 --no-trunc|awk -v N=${Stack}_${Svc}.1 '$2==N{print $1}'
+	ssh "$hoSt" sudo docker stack ps ${Stack} -f name=${Stack}_${Svc}.1 --no-trunc|awk -v N=${Stack}_${Svc}.1 '$2==N{print $1}'
 }
 sql() {
-	ssh pi sudo docker exec -i ${Stack}_${Svc}.1.$Cont su - postgres -c "'psql -U diaspora -d diaspora_production -t'"|sed '/^$/d'
+	ssh "$hoSt" sudo docker exec -i ${Stack}_${Svc}.1.$Cont su - postgres -c "'psql -U diaspora -d diaspora_production -t'"|sed '/^$/d'
 }
 
 echo Start
@@ -63,7 +64,7 @@ for Did in $(echo 'select diaspora_handle from people where id not in (select pe
 
 #Handle adding one user
 	echo "Follow $Did"
-	setUrl https://shuss.freeboxos.fr/people?q=$Did
+	setUrl "$uRl/people?q=$Did"
 	clickElem $(getElem ".btn.dropdown-toggle.btn-default" "css selector")
 	clickElem $(getLastElem "li.aspect_selector a" "css selector")
 	sleep .2
