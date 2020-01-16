@@ -2,7 +2,8 @@
 
 
 echo "Warning this script is dangerous !!!!"
-
+echo "Remove the next line from it if you knowx what you're doing"
+exit 1
 
 hoSt=${1:-"pi"}
 
