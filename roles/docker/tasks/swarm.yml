@@ -13,6 +13,7 @@
   shell: >
     docker network inspect public
   register: net
+  ignore_errors: true
 
 - name: Create the "public" network
   shell: >
